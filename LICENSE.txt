@@ -1,0 +1,4 @@
+-- Bootlogo --
+This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License. Information: http://creativecommons.org/licenses/by-sa/3.0/deed.en_US
+License Holder: Sebastien Delvaux - Sebas IDesign - sebasdelvaux@gmail.com
+The license holder requires you to use the following attribution: Sebastien Delvaux
