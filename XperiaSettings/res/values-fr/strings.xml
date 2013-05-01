@@ -19,7 +19,6 @@
     <string name="category_haptic_title">Haptique</string>
     <string name="vibrator_title">Vibreur</string>
     <string name="vibrator_tuning_title">Intensité du vibreur</string>
-    <string name="vibrator_tuning_title_head">Intensité du vibreur</string>
     <string name="vibrator_tuning_summary_head">Définir l\'intensité du vibreur</string>
     <string name="vibrator_warning">Les valeurs supérieurs à %1$d ne sont pas recommandées</string>
 </resources>

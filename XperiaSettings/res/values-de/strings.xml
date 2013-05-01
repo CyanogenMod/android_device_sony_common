@@ -24,7 +24,6 @@
     <!-- VibratorTuning -->
     <string name="vibrator_title">Vibrator</string>
     <string name="vibrator_tuning_title">Vibrationsstärke</string>
-    <string name="vibrator_tuning_title_head">Vibrationsstärke</string>
     <string name="vibrator_tuning_summary_head">Stärke des Vibrationseffektes einstellen</string>
     <string name="vibrator_warning">Vorsicht: Höhere Werte als %1$d werden nicht empfohlen</string>
 

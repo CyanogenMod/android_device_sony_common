@@ -20,7 +20,6 @@
     <string name="category_haptic_title">Háptica</string>
     <string name="vibrator_title">Vibración</string>
     <string name="vibrator_tuning_title">Intensidad de vibración</string>
-    <string name="vibrator_tuning_title_head">Intensidad de vibración</string>
     <string name="vibrator_tuning_summary_head">Establecer la intensidad de vibración</string>
     <string name="vibrator_warning">No son recomendables valores mayores de %1$d</string>
 </resources>
