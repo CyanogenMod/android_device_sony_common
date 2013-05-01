@@ -15,18 +15,11 @@
 -->
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-
-    <string name="app_name">Advanced settings</string>
-
-    <string name="defaults_button">Reset to default</string>
-
-    <!-- Haptic Preference -->
-    <string name="category_haptic_title">Haptic</string>
-
-    <!-- VibratorTuning -->
-    <string name="vibrator_title">Vibrator</string>
-    <string name="vibrator_tuning_title">Vibration strength</string>
-    <string name="vibrator_tuning_summary_head">Adjust the strength of the vibration feedback</string>
-    <string name="vibrator_warning">Values higher than %1$d are not recommended</string>
-
+    <string name="app_name">Opzioni avanzate</string>
+    <string name="defaults_button">Ripristina predefinito</string>
+    <string name="category_haptic_title">Aptico</string>
+    <string name="vibrator_title">Vibrazione</string>
+    <string name="vibrator_tuning_title">Intensità vibrazione</string>
+    <string name="vibrator_tuning_summary_head">Modifica l\'intensità della vibrazione del feedback aptico</string>
+    <string name="vibrator_warning">Valori superiori a %1$d non sono raccomandati</string>
 </resources>
