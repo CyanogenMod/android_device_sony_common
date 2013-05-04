@@ -14,18 +14,11 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-
-    <string name="app_name">Erweiterte Einstellungen</string>
-
-    <string name="defaults_button">Zurücksetzen</string>
-
-    <!-- Haptic Preference -->
-    <string name="category_haptic_title">Haptik</string>
-
-    <!-- VibratorTuning -->
-    <string name="vibrator_title">Vibrator</string>
-    <string name="vibrator_tuning_title">Vibrationsstärke</string>
-    <string name="vibrator_tuning_summary_head">Stärke des Vibrationseffektes einstellen</string>
-    <string name="vibrator_warning">Vorsicht: Höhere Werte als %1$d werden nicht empfohlen</string>
-
+    <string name="app_name">Geavanceerde instellingen</string>
+    <string name="defaults_button">Herstellen naar standaard</string>
+    <string name="category_haptic_title">Trillen</string>
+    <string name="vibrator_title">Trilapparaat</string>
+    <string name="vibrator_tuning_title">Trilsterkte</string>
+    <string name="vibrator_tuning_summary_head">Sterkte instellen van trillen</string>
+    <string name="vibrator_warning">Values higher than %1$d are not recommended</string>
 </resources>
