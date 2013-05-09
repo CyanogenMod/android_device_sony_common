@@ -15,7 +15,7 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Paramètres avancés</string>
-    <string name="defaults_button">Reset to default</string>
+    <string name="defaults_button">Réinitialiser</string>
     <string name="category_haptic_title">Haptique</string>
     <string name="vibrator_title">Vibreur</string>
     <string name="vibrator_tuning_title">Intensité du vibreur</string>
