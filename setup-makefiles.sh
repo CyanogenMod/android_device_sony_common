@@ -63,6 +63,8 @@ done
 \$(call inherit-product, vendor/$VENDOR/$DEVICE/$DEVICE-vendor-blobs.mk)
 EOF
 
+[ $BOARDCONFIGVENDOR != "true" ] && exit
+
 (cat << EOF) > ../../../$OUTDIR/BoardConfigVendor.mk
 # Copyright (C) 2011 The CyanogenMod Project
 #
