@@ -27,6 +27,10 @@ do
   OLDIFS=$IFS IFS=":" PARSING_ARRAY=($FILE) IFS=$OLDIFS
   FILE=${PARSING_ARRAY[0]}
   DEST=${PARSING_ARRAY[1]}
+  if [ -z $DEST ]
+  then
+    DEST=$FILE
+  fi
   DIR=`dirname $FILE`
   if [ ! -d $BASE/$DIR ]
   then
