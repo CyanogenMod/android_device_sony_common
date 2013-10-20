@@ -13,3 +13,4 @@
 # limitations under the License.
 
 BOARD_VENDOR := sony
+BOARD_RECOVERY_SWIPE := true
