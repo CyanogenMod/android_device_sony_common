@@ -23,6 +23,11 @@ fi
 
 for FILE in `cat ../$DEVICE/proprietary-files.txt | grep -v ^# | grep -v ^$`
 do
+  if [[ "$FILE" =~ ^obj:* ]]
+  then
+     FILE=`echo ${FILE##obj:}`
+  fi
+
   # Split the file from the destination (format is "file[:destination]")
   OLDIFS=$IFS IFS=":" PARSING_ARRAY=($FILE) IFS=$OLDIFS
   FILE=${PARSING_ARRAY[0]}

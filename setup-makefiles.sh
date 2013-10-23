@@ -26,10 +26,19 @@ EOF
 
 LINEEND=" \\"
 COUNT=`cat ../$DEVICE/proprietary-files.txt | grep -v ^# | grep -v ^$ | wc -l | awk {'print $1'}`
-for FILE in `cat proprietary-files.txt | grep -v ^# | grep -v ^$`; do
+for FILE in `cat proprietary-files.txt | grep -v ^# | grep -v ^$`
+do
   COUNT=`expr $COUNT - 1`
-  if [ $COUNT = "0" ]; then
+  if [ $COUNT = "0" ]
+  then
     LINEEND=""
+  fi
+
+  OBJ=0
+  if [[ "$FILE" =~ ^obj:* ]]
+  then
+     OBJ=1
+     FILE=`echo ${FILE##obj:}`
   fi
 
   # Split the file from the destination (format is "file[:destination]")
@@ -40,7 +49,14 @@ for FILE in `cat proprietary-files.txt | grep -v ^# | grep -v ^$`; do
     FILE=$DEST
   fi
 
-  echo "    $OUTDIR/proprietary/$FILE:system/$FILE$LINEEND" >> $MAKEFILE
+  if [ $OBJ -eq 1 ]
+  then
+    echo "    $OUTDIR/proprietary/$FILE:system/$FILE \\" >> $MAKEFILE
+    FILE1=`echo ${FILE##vendor/}`
+    echo "    $OUTDIR/proprietary/$FILE:obj/$FILE1$LINEEND" >> $MAKEFILE
+  else
+    echo "    $OUTDIR/proprietary/$FILE:system/$FILE$LINEEND" >> $MAKEFILE
+  fi
 done
 
 (cat << EOF) > ../../../$OUTDIR/$DEVICE-vendor.mk
