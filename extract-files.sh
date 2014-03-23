@@ -21,7 +21,7 @@ then
   rm -rf $BASE/*
 fi
 
-for FILE in `cat ../$DEVICE/proprietary-files.txt | grep -v ^# | grep -v ^$`
+for FILE in `grep -v ^# ../$DEVICE/proprietary-files.txt | grep -v ^$ | sort`
 do
   if [[ "$FILE" =~ ^obj:* ]]
   then
