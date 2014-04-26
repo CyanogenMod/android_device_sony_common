@@ -29,8 +29,7 @@ COUNT=`grep -v ^# ../$DEVICE/proprietary-files.txt | grep -v ^$ | wc -l | awk {'
 for FILE in `grep -v ^# ../$DEVICE/proprietary-files.txt | grep -v ^$ | sort`
 do
   COUNT=`expr $COUNT - 1`
-  if [ $COUNT = "0" ]
-  then
+  if [ $COUNT = "0" ]; then
     LINEEND=""
   fi
   # Split the file from the destination (format is "file[:destination]")
@@ -38,7 +37,7 @@ do
   if [[ ! "$FILE" =~ ^-.* ]]; then
     FILE=${PARSING_ARRAY[0]}
     DEST=${PARSING_ARRAY[1]}
-    if [ -n "$DEST" ]; then
+    if [ -n $DEST ]; then
       FILE=$DEST
     fi
     echo "    $OUTDIR/proprietary/$FILE:system/$FILE$LINEEND" >> $MAKEFILE
