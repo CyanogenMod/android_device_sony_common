@@ -29,8 +29,7 @@ COUNT=`grep -v ^# ../$DEVICE/proprietary-files.txt | grep -v ^$ | wc -l | awk {'
 for FILE in `grep -v ^# ../$DEVICE/proprietary-files.txt | grep -v ^$ | sort`
 do
   COUNT=`expr $COUNT - 1`
-  if [ $COUNT = "0" ]
-  then
+  if [ $COUNT = "0" ]; then
     LINEEND=""
   fi
   # Split the file from the destination (format is "file[:destination]")
