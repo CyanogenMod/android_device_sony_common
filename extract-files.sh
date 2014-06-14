@@ -4,12 +4,14 @@ VENDOR=sony
 
 BASE=../../../vendor/$VENDOR/$DEVICE/proprietary
 
-while getopts ":nh" options
+while getopts ":nhd:" options
 do
   case $options in
     n ) NC=1 ;;
+    d ) LDIR=$OPTARG ;;
     h ) echo "Usage: `basename $0` [OPTIONS] "
         echo "  -n  No clenup"
+        echo "  -d  Fetch blob from filesystem"
         echo "  -h  Show this help"
         exit ;;
     * ) ;;
@@ -32,14 +34,23 @@ do
   if [ -z "$DEST" ]; then
     DEST=$FILE
   fi
-  DIR=`dirname $FILE`
+  DIR=`dirname $DEST`
   if [ ! -d $BASE/$DIR ]; then
     mkdir -p $BASE/$DIR
   fi
-  adb pull /system/$FILE $BASE/$DEST
+
+  if [ -z $LDIR ]; then
+    adb pull /system/$FILE $BASE/$DEST
+  else
+    cp $LDIR/system/$FILE $BASE/$DEST
+  fi
   # if file dot not exist try destination
   if [ "$?" != "0" ]; then
-    adb pull /system/$DEST $BASE/$DEST
+    if [ -z $LDIR ]; then
+      adb pull /system/$DEST $BASE/$DEST
+    else
+      cp $LDIR/system/$DEST $BASE/$DEST
+    fi
   fi
 done
 
