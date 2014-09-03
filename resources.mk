@@ -23,3 +23,7 @@ else
 PRODUCT_COPY_FILES += \
      device/sony/common/bootlogo/fxp/$(TARGET_SCREEN_WIDTH)x$(TARGET_SCREEN_HEIGHT).rle:root/logo.rle
 endif
+
+# Fix data partition (after bootloader unlock)
+PRODUCT_COPY_FILES += \
+    device/sony/common/fix_data.sh:fix_data.sh
