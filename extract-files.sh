@@ -1,9 +1,5 @@
 #!/bin/bash
 
-export LC_ALL=C
-
-VENDOR=sony
-
 BASE=../../../vendor/$VENDOR/$DEVICE/proprietary
 
 while getopts ":nhd:" options

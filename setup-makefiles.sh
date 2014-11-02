@@ -1,6 +1,5 @@
 #!/bin/bash
 
-VENDOR=sony
 OUTDIR=vendor/$VENDOR/$DEVICE
 MAKEFILE=../../../$OUTDIR/$DEVICE-vendor-blobs.mk
 
