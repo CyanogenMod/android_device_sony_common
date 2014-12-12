@@ -2,14 +2,16 @@
 
 BASE=../../../vendor/$VENDOR/$DEVICE/proprietary
 
-while getopts ":nhd:" options
+while getopts ":nhsd:" options
 do
   case $options in
     n ) NC=1 ;;
     d ) LDIR=$OPTARG ;;
+    s ) SETUP=1 ;;
     h ) echo "Usage: `basename $0` [OPTIONS] "
-        echo "  -n  No clenup"
+        echo "  -n  No cleanup"
         echo "  -d  Fetch blob from filesystem"
+        echo "  -s  Setup only, no extraction"
         echo "  -h  Show this help"
         exit ;;
     * ) ;;
@@ -37,17 +39,19 @@ do
     mkdir -p $BASE/$DIR
   fi
 
-  if [ -z $LDIR ]; then
-    adb pull /system/$FILE $BASE/$DEST
-  else
-    cp $LDIR/system/$FILE $BASE/$DEST
-  fi
-  # if file dot not exist try destination
-  if [ "$?" != "0" ]; then
+  if [ "x$SETUP" != "x1" ]; then
     if [ -z $LDIR ]; then
-      adb pull /system/$DEST $BASE/$DEST
+      adb pull /system/$FILE $BASE/$DEST
     else
-      cp $LDIR/system/$DEST $BASE/$DEST
+      cp $LDIR/system/$FILE $BASE/$DEST
+    fi
+    # if file dot not exist try destination
+    if [ "$?" != "0" ]; then
+      if [ -z $LDIR ]; then
+        adb pull /system/$DEST $BASE/$DEST
+      else
+        cp $LDIR/system/$DEST $BASE/$DEST
+      fi
     fi
   fi
 done
