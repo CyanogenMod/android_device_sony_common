@@ -1,4 +1,5 @@
 # Offline charging animation
+ifeq ($(BOARD_USES_SONY_CHARGEMON),true)
 PRODUCT_COPY_FILES += \
      device/sony/common/animations/charging_animation_01.png:system/semc/chargemon/data/charging_animation_01.png \
      device/sony/common/animations/charging_animation_02.png:system/semc/chargemon/data/charging_animation_02.png \
@@ -14,6 +15,7 @@ PRODUCT_COPY_FILES += \
      device/sony/common/animations/non-charging_animation_05.png:system/semc/chargemon/data/non-charging_animation_05.png \
      device/sony/common/animations/non-charging_animation_06.png:system/semc/chargemon/data/non-charging_animation_06.png \
      device/sony/common/animations/non-charging_animation_07.png:system/semc/chargemon/data/non-charging_animation_07.png
+endif
 
 # Boot Logo
 ifneq ($(FXP_BUILD),true)
