@@ -1,0 +1,6 @@
+[
+  {
+    "repository": "android_external_busybox",
+    "target_path": "external/busybox"
+  }
+]
