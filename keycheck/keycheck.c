@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #include <sys/inotify.h>
 #include <sys/poll.h>
@@ -162,11 +163,13 @@ static int scan_dir(const char *dirname)
     return 0;
 }
 
-int main(int argc, char *argv[]) {
-	int i;
-	int res;
-	struct input_event event;
-	int event_count = 0;
+int main(int __attribute__((unused)) argc,
+        char __attribute__((unused)) *argv[])
+{
+    int i;
+    int res;
+    struct input_event event;
+    int event_count = 0;
     const char *device_path = "/dev/input";
 
     nfds = 1;
@@ -174,7 +177,7 @@ int main(int argc, char *argv[]) {
     ufds[0].fd = inotify_init();
     ufds[0].events = POLLIN;
 
-	res = inotify_add_watch(ufds[0].fd, device_path, IN_DELETE | IN_CREATE);
+    res = inotify_add_watch(ufds[0].fd, device_path, IN_DELETE | IN_CREATE);
     if(res < 0) {
         //fprintf(stderr, "could not add watch for %s, %s\n", device_path, strerror(errno));
         return 1;
