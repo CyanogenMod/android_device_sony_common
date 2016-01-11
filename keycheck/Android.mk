@@ -9,5 +9,5 @@ LOCAL_MODULE_PATH := $(PRODUCT_OUT)/utilities
 LOCAL_STATIC_LIBRARIES := libc
 LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_PACK_MODULE_RELOCATIONS := false
-LOCAL_CFLAGS := -Wno-implicit-function-declaration
+
 include $(BUILD_EXECUTABLE)
