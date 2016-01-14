@@ -32,9 +32,8 @@
  */
 
 #include <stdio.h>
-#include <string.h>
-#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "gelf.h"
@@ -68,15 +67,15 @@ int path_exists(const char* path) {
 }
 
 size_t uncompress_gzip_memory(const byte_p compressed_data,
-	const size_t compressed_data_size, byte_p uncompressed_data,
+	const size_t compressed_data_size, const byte_p uncompressed_data,
 	const size_t uncompressed_max_size) {
 	z_stream zInfo = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	zInfo.avail_in = compressed_data_size;
 	zInfo.total_in = compressed_data_size;
 	zInfo.avail_out = uncompressed_max_size;
 	zInfo.total_out = uncompressed_max_size;
-	zInfo.next_in = compressed_data	;
-	zInfo.next_out = uncompressed_data;
+	zInfo.next_in = (unsigned char *)compressed_data;
+	zInfo.next_out = (unsigned char *)uncompressed_data;
 	size_t return_value = 0;
 	unsigned long err = inflateInit2(&zInfo, 16 + MAX_WBITS); // zlib function
 
@@ -85,10 +84,10 @@ size_t uncompress_gzip_memory(const byte_p compressed_data,
 		if (err == Z_STREAM_END) {
 			return_value = zInfo.total_out;
 		} else {
-			printf("gunzip error -- Err:inflate %i\n", err);
+			printf("gunzip error -- Err:inflate %lu\n", err);
 		}
 	} else {
-		printf("gunzip error -- Err:inflateInit2 %i\n", err);
+		printf("gunzip error -- Err:inflateInit2 %lu\n", err);
 	}
 	inflateEnd(&zInfo);
 	return(return_value);
@@ -98,7 +97,7 @@ int scan_file_for_data(char *filename, unsigned char *data, int data_size,
 	unsigned long start_location, unsigned long *data_address) {
 	FILE *pFile;
 	unsigned long lSize;
-	unsigned char *buffer, *last_needle = NULL;
+	unsigned char *buffer;
 	unsigned char needle[data_size];
 	size_t result;
 	int i, return_val = 0;
@@ -130,8 +129,8 @@ int scan_file_for_data(char *filename, unsigned char *data, int data_size,
 		data++;
 	}
 
-	unsigned char *p = memmem(buffer + start_location, lSize - start_location,
-		needle, data_size);
+	unsigned char *p = (unsigned char*) memmem(buffer + start_location,
+			lSize - start_location, needle, data_size);
 
 	if (!p) {
 		return_val = -1;
@@ -173,7 +172,7 @@ void copy_file_part(const char* infile, const char* outfile,
 	}
 
 	// Allocate memory for reading the ramdisk
-	buffer = (unsigned char*)malloc(sizeof(unsigned char) * file_size);
+	buffer = (char*)malloc(sizeof(char) * file_size);
 	if (buffer == NULL) {
 		printf("Unable to malloc memory for file copy.\n");
 		fclose(iFile);
@@ -207,7 +206,7 @@ void copy_file_part(const char* infile, const char* outfile,
 			printf("Failed to gunzip\n");
 			exit(-1);
 		}
-		printf("Original size: %lu, gunzipped: %lu\n", file_size,
+		printf("Original size: %lu, gunzipped: %u\n", file_size,
 			uncompressed_size);
 		buffer = uncompressed_buffer;
 		file_size = uncompressed_size;
@@ -286,7 +285,6 @@ void extract_android(const char* img_filename, unsigned long* offset,
 	unsigned char* buffer;
 
 	if (ramdisk_loc == 3) {
-		close(img_fd);
 		printf("Cannot extract rpm on ANDROID image format.\n");
 		exit(-1);
 	}
@@ -337,7 +335,7 @@ void extract_android(const char* img_filename, unsigned long* offset,
 void extract_ramdisk() {
 	int img_fd, return_val = 0;
 	char output[PATH_MAX];
-	char command[4096], magic_buffer[4];
+	char magic_buffer[4];
 	size_t result, read_size = sizeof(magic_buffer);
 	unsigned long offset, ramdisk_size;
 
@@ -396,7 +394,7 @@ void extract_ramdisk() {
 	if (check_ramdisk) {
 		printf("Checking ramdisk to ensure it is not a stock Sony recovery.");
 		printf("\n  (Checking for %s)\n", EER_SEARCH_STRING);
-		unsigned char needle[7] = EER_SEARCH_STRING;
+		unsigned char needle[8] = EER_SEARCH_STRING;
 		unsigned long fota_location;
 		return_val = scan_file_for_data(output, needle, sizeof(needle), 0,
 			&fota_location);
@@ -436,14 +434,14 @@ void print_usage() {
 	printf("copied to the output filename.\n");
 }
 
-int main(int argc, char** argv) {
+int extract_ramdisk(int argc, const char** argv) {
 	int index;
 
 	umask(0);
 
 	if (argc < 5) {
 		print_usage();
-		exit(-1);
+		return -1;
 	}
 
 	strcpy(tmp_dir, EER_DEFAULT_TMP);
@@ -520,9 +518,9 @@ int main(int argc, char** argv) {
 
 	if (arg_error != 0) {
 		print_usage();
-		exit(-1);
+		return -1;
 	} else {
 		extract_ramdisk();
-		exit(0);
+		return 0;
 	}
 }
