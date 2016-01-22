@@ -521,6 +521,8 @@ int extract_ramdisk(int argc, const char** argv) {
 			dont_unzip = 1;
 		} else if (strncmp(argv[index], "-c", 2) == 0) {
 			check_ramdisk = 1;
+		} else if (strncmp(argv[index], "-z", 2) == 0) {
+			check_ramdisk = 0;
 		} else if (strncmp(argv[index], "-0", 2) == 0) {
 			ramdisk_loc = 1;
 		} else if (strncmp(argv[index], "-2", 2) == 0) {
