@@ -72,6 +72,7 @@ int main(int argc, char** __attribute__((unused)) argv)
     // Keycheck introduction
     if (!recoveryBoot)
     {
+#if KEYCHECK_ENABLED
         // Listen for volume keys
         const char* argv_keycheck[] = { EXEC_KEYCHECK, nullptr };
         pid_t keycheck_pid = system_exec_bg(argv_keycheck);
@@ -83,6 +84,7 @@ int main(int argc, char** __attribute__((unused)) argv)
         keycheckStatus = system_exec_kill(keycheck_pid, KEYCHECK_TIMEOUT);
         recoveryBoot = (keycheckStatus == KEYCHECK_RECOVERY_BOOT_ONLY ||
                 keycheckStatus == KEYCHECK_RECOVERY_FOTA_BOOT);
+#endif
     }
     else
     {
@@ -101,11 +103,13 @@ int main(int argc, char** __attribute__((unused)) argv)
         if (DEV_BLOCK_FOTA_NUM != -1 &&
                 keycheckStatus != KEYCHECK_RECOVERY_BOOT_ONLY)
         {
+            write_string(BOOT_TXT, "RECOVERY FOTA " DEV_BLOCK_FOTA_PATH, true);
             mknod(DEV_BLOCK_FOTA_PATH, S_IFBLK | 0600,
                     makedev(DEV_BLOCK_MAJOR, DEV_BLOCK_FOTA_NUM));
             mount("/", "/", NULL, MS_MGC_VAL | MS_REMOUNT, "");
             const char* argv_extract_elf[] = { "", "-i", DEV_BLOCK_FOTA_PATH,
-                    "-o", SBIN_CPIO_RECOVERY, "-t", "/", "-c" };
+                    "-o", SBIN_CPIO_RECOVERY, "-t", "/",
+                    FOTA_RAMDISK_CHECK ? "-c" : "-z" };
             extract_ramdisk(sizeof(argv_extract_elf) / sizeof(const char*),
                     argv_extract_elf);
         }
