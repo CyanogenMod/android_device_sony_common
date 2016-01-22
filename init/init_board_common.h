@@ -27,8 +27,8 @@
 #define SBIN_CPIO_RECOVERY "/sbin/ramdisk-recovery.cpio"
 
 // Constants: keycheck commands
-#define KEYCHECK_RECOVERY_BOOT (41 << 8)
-#define KEYCHECK_RECOVERY_FOTA (42 << 8)
+#define KEYCHECK_RECOVERY_BOOT_ONLY (41 << 8)
+#define KEYCHECK_RECOVERY_FOTA_BOOT (42 << 8)
 
 // Class: init_board_common
 class init_board_common
