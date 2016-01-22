@@ -46,6 +46,9 @@
 #ifndef DEV_INPUT_MINOR_BASE
 #define DEV_INPUT_MINOR_BASE 64
 #endif
+#ifndef DEV_STOCK_CHECK
+#define DEV_STOCK_CHECK "-c"
+#endif
 
 // Constants: warmboot commands
 #ifndef WARMBOOT_CMDLINE
