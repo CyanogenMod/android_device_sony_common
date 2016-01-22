@@ -72,17 +72,26 @@ int main(int argc, char** __attribute__((unused)) argv)
     // Keycheck introduction
     if (!recoveryBoot)
     {
-        // Listen for volume keys
-        const char* argv_keycheck[] = { EXEC_KEYCHECK, nullptr };
-        pid_t keycheck_pid = system_exec_bg(argv_keycheck);
+        // Disable keycheck if timeout is 0
+        if (KEYCHECK_TIMEOUT > 0)
+        {
+            // Listen for volume keys
+            const char* argv_keycheck[] = { EXEC_KEYCHECK, nullptr };
+            pid_t keycheck_pid = system_exec_bg(argv_keycheck);
 
-        // Board keycheck introduction
-        init_board.introduce_keycheck();
+            // Board keycheck introduction
+            init_board.introduce_keycheck();
 
-        // Retrieve keycheck result
-        keycheckStatus = system_exec_kill(keycheck_pid, KEYCHECK_TIMEOUT);
-        recoveryBoot = (keycheckStatus == KEYCHECK_RECOVERY_BOOT ||
-                keycheckStatus == KEYCHECK_RECOVERY_FOTA);
+            // Retrieve keycheck result
+            keycheckStatus = system_exec_kill(keycheck_pid, KEYCHECK_TIMEOUT);
+            recoveryBoot = (keycheckStatus == KEYCHECK_RECOVERY_BOOT ||
+                    keycheckStatus == KEYCHECK_RECOVERY_FOTA);
+        }
+        else
+        {
+            // Always boot normally if no warmboot and we disabled keycheck
+            keycheckStatus = KEYCHECK_RECOVERY_BOOT;
+        }
     }
     else
     {
@@ -101,11 +110,22 @@ int main(int argc, char** __attribute__((unused)) argv)
         if (DEV_BLOCK_FOTA_NUM != -1 &&
                 keycheckStatus != KEYCHECK_RECOVERY_BOOT)
         {
+            write_string(BOOT_TXT, "RECOVERY FOTA PATH " DEV_BLOCK_FOTA_PATH, true);
             mknod(DEV_BLOCK_FOTA_PATH, S_IFBLK | 0600,
                     makedev(DEV_BLOCK_MAJOR, DEV_BLOCK_FOTA_NUM));
             mount("/", "/", NULL, MS_MGC_VAL | MS_REMOUNT, "");
-            const char* argv_extract_elf[] = { "", "-i", DEV_BLOCK_FOTA_PATH,
-                    "-o", SBIN_CPIO_RECOVERY, "-t", "/", "-c" };
+            // Dirty hack TODO: remove when -c works (check for stock recovery)
+            // If we disbled keycheck then we must have a custom recovery in FOTA
+            if (KEYCHECK_TIMEOUT > 0)
+            {
+                const char* argv_extract_elf[] = { "", "-i", DEV_BLOCK_FOTA_PATH,
+                        "-o", SBIN_CPIO_RECOVERY, "-t", "/", "-c" };
+            }
+            else
+            {
+                const char* argv_extract_elf[] = { "", "-i", DEV_BLOCK_FOTA_PATH,
+                        "-o", SBIN_CPIO_RECOVERY, "-t", "/" };
+            }
             extract_ramdisk(sizeof(argv_extract_elf) / sizeof(const char*),
                     argv_extract_elf);
         }
@@ -123,9 +143,13 @@ int main(int argc, char** __attribute__((unused)) argv)
         init_board.introduce_android();
 
         // Unpack Android ramdisk
-        const char* argv_ramdiskcpio[] = { EXEC_TOYBOX, "cpio", "-i", "-F",
-                SBIN_CPIO_ANDROID, nullptr };
-        system_exec(argv_ramdiskcpio);
+        // Check file before extraction as we may be on a nokey boot.img
+        if (file_exists(SBIN_CPIO_ANDROID))
+        {
+            const char* argv_ramdiskcpio[] = { EXEC_TOYBOX, "cpio", "-i", "-F",
+                    SBIN_CPIO_ANDROID, nullptr };
+            system_exec(argv_ramdiskcpio);
+        }
     }
 
     // Finish init outputs
