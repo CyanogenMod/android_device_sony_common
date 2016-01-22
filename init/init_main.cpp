@@ -72,6 +72,7 @@ int main(int argc, char** __attribute__((unused)) argv)
     // Keycheck introduction
     if (!recoveryBoot)
     {
+#if KEYCHECK_ENABLED
         // Listen for volume keys
         const char* argv_keycheck[] = { EXEC_KEYCHECK, nullptr };
         pid_t keycheck_pid = system_exec_bg(argv_keycheck);
@@ -83,6 +84,7 @@ int main(int argc, char** __attribute__((unused)) argv)
         keycheckStatus = system_exec_kill(keycheck_pid, KEYCHECK_TIMEOUT);
         recoveryBoot = (keycheckStatus == KEYCHECK_RECOVERY_CM_ONLY ||
                 keycheckStatus == KEYCHECK_RECOVERY_FOTA_CM);
+#endif
     }
     else
     {
