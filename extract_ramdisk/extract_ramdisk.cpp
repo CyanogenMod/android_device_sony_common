@@ -207,7 +207,7 @@ int copy_file_part(const char* infile, const char* outfile,
 			printf("Failed to gunzip\n");
 			return -1;
 		}
-		printf("Original size: %lu, gunzipped: %u\n", file_size,
+		printf("Original size: %lu, gunzipped: %zu\n", file_size,
 			uncompressed_size);
 		buffer = uncompressed_buffer;
 		file_size = uncompressed_size;
