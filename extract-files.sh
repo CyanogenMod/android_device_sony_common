@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PROPRIETARY_FILES=${PROPRIETARY_FILES:-proprietary-files*.txt}
+
 BASE=../../../vendor/$VENDOR/$DEVICE/proprietary
 
 while getopts ":nhsd:" options
@@ -22,7 +24,7 @@ if [ "x$NC" != "x1" ]; then
   rm -rf $BASE/*
 fi
 
-for FILE in `grep -v ^# ../$DEVICE/proprietary-files.txt | grep -v ^$ | sort`
+for FILE in `cat ../$DEVICE/$PROPRIETARY_FILES | grep -v ^# | grep -v ^$ | sort`
 do
   # Split the file from the destination (format is "file[:destination]")
   OLDIFS=$IFS IFS=":" PARSING_ARRAY=($FILE) IFS=$OLDIFS
