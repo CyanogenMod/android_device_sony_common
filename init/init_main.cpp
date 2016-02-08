@@ -100,12 +100,12 @@ int main(int argc, char** __attribute__((unused)) argv)
         init_board.introduce_recovery();
 
         // FOTA Recovery importation
-        if (DEV_BLOCK_FOTA_NUM != -1 &&
+        if (DEV_BLOCK_FOTA_MAJOR != -1 &&
                 keycheckStatus != KEYCHECK_RECOVERY_BOOT_ONLY)
         {
             write_string(BOOT_TXT, "RECOVERY FOTA " DEV_BLOCK_FOTA_PATH, true);
             mknod(DEV_BLOCK_FOTA_PATH, S_IFBLK | 0600,
-                    makedev(DEV_BLOCK_MAJOR, DEV_BLOCK_FOTA_NUM));
+                    makedev(DEV_BLOCK_FOTA_MAJOR, DEV_BLOCK_FOTA_MINOR));
             mount("/", "/", NULL, MS_MGC_VAL | MS_REMOUNT, "");
             const char* argv_extract_elf[] = { "", "-i", DEV_BLOCK_FOTA_PATH,
                     "-o", SBIN_CPIO_RECOVERY, "-t", "/",
