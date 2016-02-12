@@ -1,5 +1,5 @@
 LOCAL_PATH := $(call my-dir)
 
-ifeq ($(BOARD_VENDOR),sony)
+ifeq ($(PRODUCT_BRAND),Sony)
     include $(call all-subdir-makefiles,$(LOCAL_PATH))
 endif
