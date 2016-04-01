@@ -29,6 +29,7 @@ int main(int argc, char** __attribute__((unused)) argv)
 {
     // Execution variables
     unsigned char i;
+    bool multiRomBoot;
     bool recoveryBoot;
     int keycheckStatus;
     char buffer_events[20];
@@ -66,11 +67,12 @@ int main(int argc, char** __attribute__((unused)) argv)
     // Additional board inits
     init_board.start_init();
 
-    // Recovery boot detection
+    // Warmboots detection
+    multiRomBoot = file_contains(WARMBOOT_CMDLINE, WARMBOOT_MULTIROM);
     recoveryBoot = file_contains(WARMBOOT_CMDLINE, WARMBOOT_RECOVERY);
 
     // Keycheck introduction
-    if (!recoveryBoot)
+    if (!recoveryBoot && !multiRomBoot)
     {
 #if KEYCHECK_ENABLED
         // Listen for volume keys
@@ -85,6 +87,11 @@ int main(int argc, char** __attribute__((unused)) argv)
         recoveryBoot = (keycheckStatus == KEYCHECK_RECOVERY_BOOT_ONLY ||
                 keycheckStatus == KEYCHECK_RECOVERY_FOTA_BOOT);
 #endif
+    }
+    else if (multiRomBoot)
+    {
+        // Direct boot to Android on MultiROM kexec
+        recoveryBoot = false;
     }
     else
     {

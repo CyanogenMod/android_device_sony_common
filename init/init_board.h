@@ -51,6 +51,9 @@
 #ifndef WARMBOOT_CMDLINE
 #define WARMBOOT_CMDLINE "/proc/cmdline"
 #endif
+#ifndef WARMBOOT_MULTIROM
+#define WARMBOOT_MULTIROM "mrom_kexecd=1"
+#endif
 #ifndef WARMBOOT_RECOVERY
 #define WARMBOOT_RECOVERY "warmboot=0x77665502"
 #endif
