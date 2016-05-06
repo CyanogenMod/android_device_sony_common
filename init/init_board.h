@@ -51,6 +51,9 @@
 #ifndef WARMBOOT_CMDLINE
 #define WARMBOOT_CMDLINE "/proc/cmdline"
 #endif
+#ifndef WARMBOOT_CHARGER
+#define WARMBOOT_CHARGER "androidboot.mode=charger"
+#endif
 #ifndef WARMBOOT_MULTIROM
 #define WARMBOOT_MULTIROM "mrom_kexecd=1"
 #endif
@@ -59,6 +62,9 @@
 #endif
 
 // Constants: init configurations
+#ifndef CHARGER_BYPASS
+#define CHARGER_BYPASS 1
+#endif
 #ifndef FOTA_RAMDISK_CHECK
 #define FOTA_RAMDISK_CHECK 1
 #endif
