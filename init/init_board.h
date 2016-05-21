@@ -37,15 +37,6 @@
 #ifndef DEV_BLOCK_FOTA_PATH
 #define DEV_BLOCK_FOTA_PATH DEV_BLOCK_PATH "p" STR(DEV_BLOCK_FOTA_NUM)
 #endif
-#ifndef DEV_INPUT_EVENTS
-#define DEV_INPUT_EVENTS "/dev/input/event%u"
-#endif
-#ifndef DEV_INPUT_MAJOR
-#define DEV_INPUT_MAJOR 13
-#endif
-#ifndef DEV_INPUT_MINOR_BASE
-#define DEV_INPUT_MINOR_BASE 64
-#endif
 
 // Constants: warmboot commands
 #ifndef WARMBOOT_CMDLINE

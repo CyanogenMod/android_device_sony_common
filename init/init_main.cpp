@@ -33,7 +33,7 @@ int main(int argc, char** __attribute__((unused)) argv)
     bool multiRomBoot;
     bool recoveryBoot;
     int keycheckStatus;
-    char buffer_events[20];
+    char buffer_event[20];
     init_board_device init_board;
 
     // Generate boot log
@@ -55,9 +55,8 @@ int main(int argc, char** __attribute__((unused)) argv)
             makedev(DEV_BLOCK_MAJOR, DEV_BLOCK_MINOR));
     for (i = 0; i <= 12; ++i)
     {
-        snprintf(buffer_events, sizeof(buffer_events), DEV_INPUT_EVENTS, i);
-        mknod(buffer_events, S_IFCHR | 0600,
-              makedev(DEV_INPUT_MAJOR, DEV_INPUT_MINOR_BASE + i));
+        snprintf(buffer_event, sizeof(buffer_event), "/dev/input/event%u", i);
+        mknod(buffer_event, S_IFCHR | 0600, makedev(13, 64 + i));
     }
     mknod("/dev/null", S_IFCHR | 0666, makedev(1, 3));
 
