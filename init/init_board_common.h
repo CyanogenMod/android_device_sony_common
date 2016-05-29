@@ -22,6 +22,7 @@
 // Constants: file paths
 #define BOOT_TXT "/boot.txt"
 #define EXEC_KEYCHECK "/sbin/keycheck"
+#define EXEC_INIT_KEYCHECK "/sbin/init_keycheck"
 #define EXEC_TOYBOX "/sbin/toybox"
 #define SBIN_CPIO_ANDROID "/sbin/ramdisk.cpio"
 #define SBIN_CPIO_RECOVERY "/sbin/ramdisk-recovery.cpio"

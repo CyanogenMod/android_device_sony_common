@@ -82,12 +82,22 @@ int main(int argc, char** __attribute__((unused)) argv)
         pid_t keycheck_pid = system_exec_bg(argv_keycheck);
 
         // Board keycheck introduction
+#if KEYCHECK_ANIMATED
+        const char* argv_init_keycheck[] = { EXEC_INIT_KEYCHECK, nullptr };
+        pid_t init_keycheck_pid = system_exec_bg(argv_init_keycheck);
+#else
         init_board.introduce_keycheck();
+#endif
 
         // Retrieve keycheck result
         keycheckStatus = system_exec_kill(keycheck_pid, KEYCHECK_TIMEOUT);
         recoveryBoot = (keycheckStatus == KEYCHECK_RECOVERY_BOOT_ONLY ||
                 keycheckStatus == KEYCHECK_RECOVERY_FOTA_BOOT);
+
+#if KEYCHECK_ANIMATED
+        // Wait for the animated keycheck to end
+        system_exec_kill(init_keycheck_pid, KEYCHECK_TIMEOUT);
+#endif
 #endif
     }
     else if (multiRomBoot || chargerBoot)

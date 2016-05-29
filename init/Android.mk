@@ -49,3 +49,28 @@ LOCAL_STATIC_LIBRARIES := \
 LOCAL_CLANG := true
 
 include $(BUILD_EXECUTABLE)
+
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES := \
+    init_io.cpp \
+    init_keycheck.cpp
+
+LOCAL_CPPFLAGS := \
+    -Wall \
+    -Wextra \
+    -Werror
+
+LOCAL_MODULE := init_keycheck
+LOCAL_MODULE_TAGS := optional
+
+LOCAL_MODULE_PATH := $(PRODUCT_OUT)/utilities
+LOCAL_UNSTRIPPED_PATH := $(PRODUCT_OUT)/symbols/utilities
+
+LOCAL_FORCE_STATIC_EXECUTABLE := true
+LOCAL_STATIC_LIBRARIES := \
+    libc
+
+LOCAL_CLANG := true
+
+include $(BUILD_EXECUTABLE)
