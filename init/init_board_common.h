@@ -44,6 +44,9 @@ public:
     // Board: introduction for keycheck
     virtual void introduce_keycheck() { }
 
+    // Board: finalization of keycheck
+    virtual void finish_keycheck(bool __attribute__((unused)) recoveryBoot) { }
+
     // Board: introduction for Android
     virtual void introduce_android() { }
 

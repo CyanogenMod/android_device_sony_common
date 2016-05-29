@@ -88,6 +88,9 @@ int main(int argc, char** __attribute__((unused)) argv)
         keycheckStatus = system_exec_kill(keycheck_pid, KEYCHECK_TIMEOUT);
         recoveryBoot = (keycheckStatus == KEYCHECK_RECOVERY_BOOT_ONLY ||
                 keycheckStatus == KEYCHECK_RECOVERY_FOTA_BOOT);
+
+        // Board keycheck introduction
+        init_board.finish_keycheck(recoveryBoot);
 #endif
     }
     else if (multiRomBoot || chargerBoot)
