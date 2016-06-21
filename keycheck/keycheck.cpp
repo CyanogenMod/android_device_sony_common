@@ -10,6 +10,8 @@
 #include <errno.h>
 #include <unistd.h>
 
+#include "keycheck.h"
+
 static struct pollfd *ufds;
 static char **device_names;
 static int nfds;
@@ -61,13 +63,13 @@ static int open_device(const char *device)
         // a non-fatal error
     }
 
-    new_ufds = realloc(ufds, sizeof(ufds[0]) * (nfds + 1));
+    new_ufds = (struct pollfd*) realloc(ufds, sizeof(ufds[0]) * (nfds + 1));
     if (new_ufds == NULL) {
         //fprintf(stderr, "out of memory\n");
         return -1;
     }
     ufds = new_ufds;
-    new_device_names = realloc(device_names, sizeof(device_names[0]) * (nfds + 1));
+    new_device_names = (char**) realloc(device_names, sizeof(device_names[0]) * (nfds + 1));
     if (new_device_names == NULL) {
         //fprintf(stderr, "out of memory\n");
         return -1;
@@ -165,17 +167,22 @@ static int scan_dir(const char *dirname)
     return 0;
 }
 
-int main(int __attribute__((unused)) argc,
-        char __attribute__((unused)) *argv[])
+int keycheck_timed(uint8_t mode, uint8_t timeout)
 {
     int i;
     int res;
     struct input_event event;
     int event_count = 0;
     const char *device_path = "/dev/input";
+    time_t time_start, time_cur;
+
+    if (mode == KEYCHECK_TIMED) {
+        time(&time_start);
+        time_cur = time_start;
+    }
 
     nfds = 1;
-    ufds = calloc(1, sizeof(ufds[0]));
+    ufds = (struct pollfd*) calloc(1, sizeof(ufds[0]));
     ufds[0].fd = inotify_init();
     ufds[0].events = POLLIN;
 
@@ -190,7 +197,7 @@ int main(int __attribute__((unused)) argc,
         return 1;
     }
 
-    while (1) {
+    while (mode == KEYCHECK_UNLIMITED || time_cur - time_start < timeout) {
         poll(ufds, nfds, -1);
         if (ufds[0].revents & POLLIN) {
             read_notify(device_path, ufds[0].fd);
@@ -217,5 +224,10 @@ int main(int __attribute__((unused)) argc,
                 }
             }
         }
+        if (mode == KEYCHECK_TIMED) {
+            time(&time_cur);
+        }
     }
+
+    return 0;
 }
