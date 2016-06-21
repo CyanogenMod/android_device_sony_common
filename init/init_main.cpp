@@ -21,6 +21,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "../keycheck/keycheck.h"
+
 #include "init_board.h"
 #include "init_prototypes.h"
 
@@ -80,15 +82,11 @@ int main(int argc, char** __attribute__((unused)) argv)
     if (!recoveryBoot && !multiRomBoot && !chargerBoot)
     {
 #if KEYCHECK_ENABLED
-        // Listen for volume keys
-        const char* argv_keycheck[] = { EXEC_KEYCHECK, nullptr };
-        pid_t keycheck_pid = system_exec_bg(argv_keycheck);
-
         // Board keycheck introduction
         init_board.introduce_keycheck();
 
-        // Retrieve keycheck result
-        keycheckStatus = system_exec_kill(keycheck_pid, KEYCHECK_TIMEOUT);
+        // Listen for volume keys and retrieve the result
+        keycheckStatus = keycheck_timed(KEYCHECK_TIMED, KEYCHECK_TIMEOUT);
         recoveryBoot = (keycheckStatus == KEYCHECK_RECOVERY_BOOT_ONLY ||
                 keycheckStatus == KEYCHECK_RECOVERY_FOTA_BOOT);
 
