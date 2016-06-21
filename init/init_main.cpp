@@ -67,6 +67,9 @@ int main(int argc, char** __attribute__((unused)) argv)
     // Additional board inits
     init_board.start_init();
 
+    // Toybox preparation
+    rename(EXEC_TOYBOX_UTILITY, EXEC_TOYBOX);
+
     // Warmboots detection
     chargerBoot = CHARGER_BYPASS &&
             file_contains(WARMBOOT_CMDLINE, WARMBOOT_CHARGER);
@@ -153,6 +156,9 @@ int main(int argc, char** __attribute__((unused)) argv)
     // Finish init outputs
     init_board.finish_init();
     write_date(BOOT_TXT, true);
+
+    // Delete init toybox
+    unlink(EXEC_TOYBOX);
 
     // Unmount filesystems
     umount("/proc");
