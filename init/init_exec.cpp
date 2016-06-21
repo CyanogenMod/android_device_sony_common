@@ -69,6 +69,6 @@ int system_exec_kill(pid_t pid, uint8_t timeout)
         time(&time_cur);
     } while (time_cur - time_start < timeout);
 
-    kill(pid, SIGTERM);
+    kill(pid, SIGKILL);
     return 0;
 }
