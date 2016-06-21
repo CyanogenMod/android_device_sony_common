@@ -23,7 +23,8 @@ LOCAL_SRC_FILES := \
     init_files.cpp \
     init_io.cpp \
     init_main.cpp \
-    ../extract_ramdisk/extract_ramdisk.cpp
+    ../extract_ramdisk/extract_ramdisk.cpp \
+    ../keycheck/keycheck.cpp
 
 LOCAL_C_INCLUDES := \
     ../extract_ramdisk
