@@ -154,6 +154,9 @@ int main(int argc, char** __attribute__((unused)) argv)
     init_board.finish_init();
     write_date(BOOT_TXT, true);
 
+    // Delete init toybox
+    unlink(EXEC_TOYBOX);
+
     // Unmount filesystems
     umount("/proc");
     umount("/sys");
