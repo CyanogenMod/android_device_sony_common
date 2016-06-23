@@ -40,6 +40,7 @@ void write_date(const char* path, bool append = false);
 // Prototypes: binary executions
 int system_exec(const char* argv[]);
 pid_t system_exec_bg(const char* argv[]);
+void system_exec_inline(const char* argv[]);
 int system_exec_kill(pid_t pid, uint8_t timeout = 0);
 
 // Prototype: elf ramdisk extraction
