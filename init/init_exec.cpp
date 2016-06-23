@@ -49,6 +49,12 @@ pid_t system_exec_bg(const char* argv[])
     return pid;
 }
 
+// Function: binary inline execution
+void system_exec_inline(const char* argv[])
+{
+    execv(argv[0], const_cast<char* const*>(&argv[0]));
+}
+
 // Function: binary background kill with timeout
 int system_exec_kill(pid_t pid, uint8_t timeout)
 {

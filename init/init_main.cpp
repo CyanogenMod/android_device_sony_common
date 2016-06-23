@@ -167,9 +167,9 @@ int main(int argc, char** __attribute__((unused)) argv)
         // Unlink /dev/*
         dir_unlink_r("/dev", false);
 
-        // Launch ramdisk /init
+        // Launch ramdisk /init in the current process
         const char* argv_init[] = { "/init", nullptr };
-        system_exec(argv_init);
+        system_exec_inline(argv_init);
     }
 
     return 0;
