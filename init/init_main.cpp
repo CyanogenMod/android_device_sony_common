@@ -111,6 +111,9 @@ int main(int argc, char** __attribute__((unused)) argv)
         write_string(BOOT_TXT, "RECOVERY BOOT", true);
         init_board.introduce_recovery();
 
+        // Clean ramdisk files before extraction
+        ramdisk_clean_files();
+
         // FOTA Recovery importation
         if (DEV_BLOCK_FOTA_NUM != -1 &&
                 keycheckStatus != KEYCHECK_RECOVERY_BOOT_ONLY)
@@ -141,13 +144,9 @@ int main(int argc, char** __attribute__((unused)) argv)
         write_string(BOOT_TXT, "ANDROID BOOT", true);
         init_board.introduce_android();
 
-        // Unpack Android ramdisk
-        if (file_exists(SBIN_CPIO_ANDROID))
-        {
-            const char* argv_ramdiskcpio[] = { EXEC_TOYBOX, "cpio", "-i", "-F",
-                    SBIN_CPIO_ANDROID, nullptr };
-            system_exec(argv_ramdiskcpio);
-        }
+        // Rename Android init
+        unlink("/init");
+        rename("/init.real", "/init");
     }
 
     // Finish init outputs

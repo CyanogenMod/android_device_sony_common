@@ -30,12 +30,17 @@
 bool file_exists(const char* path);
 bool file_empty(const char* path);
 bool file_contains(const char* path, const char* needle);
+void file_unlink_wildcard(const char* path_dir, const char* starts_with = "",
+        const char* ends_with = "");
 void dir_unlink_r(const char* path_dir, bool rm_top, bool child = false);
 
 // Prototypes: files outputs
 void write_int(const char* path, int value);
 void write_string(const char* path, const char* value, bool append = false);
 void write_date(const char* path, bool append = false);
+
+// Prototypes: ramdisk helpers
+void ramdisk_clean_files(void);
 
 // Prototypes: binary executions
 int system_exec(const char* argv[]);

@@ -61,6 +61,43 @@ bool file_contains(const char* path, const char* needle)
     return (strstr(file_content.c_str(), needle) != NULL);
 }
 
+// Function: wildcard files remover
+void file_unlink_wildcard(const char* path_dir, const char* starts_with,
+        const char* ends_with)
+{
+    DIR* dir_p;
+    struct dirent* dir_r;
+    struct stat cur_stat;
+    unsigned int len_c, len_s, len_e;
+    char cur_file[512] = { 0 };
+
+    dir_p = opendir(path_dir);
+    len_e = strlen(ends_with);
+    len_s = strlen(starts_with);
+
+    while (dir_p != NULL && (dir_r = readdir(dir_p)) != NULL) {
+        if (dir_r->d_name[0] == '.') {
+            continue;
+        }
+        snprintf(cur_file, sizeof(cur_file), "%s%s", path_dir, dir_r->d_name);
+
+        if (stat(cur_file, &cur_stat) || S_ISDIR(cur_stat.st_mode)) {
+            continue;
+        }
+
+        len_c = strlen(cur_file);
+        if (len_c >= len_s && len_c >= len_e &&
+                strncmp(cur_file, starts_with, len_s) == 0 &&
+                strncmp(cur_file + len_c - len_e, ends_with, len_e) == 0) {
+            unlink(cur_file);
+        }
+    }
+
+    if (dir_p != NULL) {
+        closedir(dir_p);
+    }
+}
+
 // Function: recursive director removal
 void dir_unlink_r(const char* path_dir, bool rm_top, bool child)
 {
