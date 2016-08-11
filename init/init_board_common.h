@@ -30,6 +30,20 @@
 #define KEYCHECK_RECOVERY_BOOT_ONLY (41 << 8)
 #define KEYCHECK_RECOVERY_FOTA_BOOT (42 << 8)
 
+// List of files to preserve during cleanup before ramdisk extraction.
+static std::vector<std::string> exclusion_list_cleanup = {
+		"/sys",
+		"/proc",
+		"/root",
+		"/dev",
+		"/sbin",
+		"/init.real",
+		"/boot.txt",
+		"/sbin/toybox",
+		"/sbin/keycheck",
+		"/sbin/init_sony",
+		"/sbin/ramdisk-recovery.cpio"};
+
 // Class: init_board_common
 class init_board_common
 {
@@ -54,7 +68,11 @@ public:
     virtual void introduce_recovery() { }
 
     // Board: finish init execution
-    virtual void finish_init() { }
+    virtual void finish_init() {
+	    // Rename init
+	    unlink("/init");
+	    rename("/init.real", "/init");
+    }
 };
 
 #endif // __INIT_BOARD_COMMON_H__

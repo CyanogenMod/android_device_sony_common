@@ -22,7 +22,6 @@
 #include <unistd.h>
 
 #include "init_board.h"
-#include "init_prototypes.h"
 
 // Main: executable
 int main(int argc, char** __attribute__((unused)) argv)
@@ -110,6 +109,9 @@ int main(int argc, char** __attribute__((unused)) argv)
         // Recovery boot
         write_string(BOOT_TXT, "RECOVERY BOOT", true);
         init_board.introduce_recovery();
+        
+        // Cleanup of non-needed ramdisk files for the recovery boot.
+		//dir_unlink_r("/", false, false, exclusion_list_cleanup);
 
         // FOTA Recovery importation
         if (DEV_BLOCK_FOTA_NUM != -1 &&
@@ -140,14 +142,6 @@ int main(int argc, char** __attribute__((unused)) argv)
         // Android boot
         write_string(BOOT_TXT, "ANDROID BOOT", true);
         init_board.introduce_android();
-
-        // Unpack Android ramdisk
-        if (file_exists(SBIN_CPIO_ANDROID))
-        {
-            const char* argv_ramdiskcpio[] = { EXEC_TOYBOX, "cpio", "-i", "-F",
-                    SBIN_CPIO_ANDROID, nullptr };
-            system_exec(argv_ramdiskcpio);
-        }
     }
 
     // Finish init outputs

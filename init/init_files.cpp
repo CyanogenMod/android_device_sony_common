@@ -20,10 +20,13 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include <base/file.h>
+#include <vector>
 #include <string>
+#include <algorithm>
 
-#include "init_prototypes.h"
+#include <base/file.h>
+
+#include "init_board_common.h"
 
 // Function: file existence check
 bool file_exists(const char* path)
@@ -62,32 +65,56 @@ bool file_contains(const char* path, const char* needle)
 }
 
 // Function: recursive director removal
-void dir_unlink_r(const char* path_dir, bool rm_top, bool child)
-{
-    DIR* dir_p;
-    struct dirent* dir_r;
+void dir_unlink_r(std::string path_dir, bool rm_top, bool child, std::vector<std::string> exclusion_list) {
     struct stat cur_stat;
-    char cur_file[512] = { 0 };
+    std::vector<std::string> dir_content = get_dir_entries(path_dir);
 
-    dir_p = opendir(path_dir);
-
-    while (dir_p != NULL && (dir_r = readdir(dir_p)) != NULL) {
-        if (dir_r->d_name[0] == '.') {
-            continue;
-        }
-        snprintf(cur_file, sizeof(cur_file), "%s/%s", path_dir, dir_r->d_name);
-
-        if (stat(cur_file, &cur_stat) || S_ISDIR(cur_stat.st_mode)) {
-            dir_unlink_r(cur_file, rm_top, true);
-        } else {
-            unlink(cur_file);
-        }
+    for(std::string file_name : dir_content) {
+    	if(!contains_string(file_name, exclusion_list)) {
+			if (stat(file_name.c_str(), &cur_stat) || S_ISDIR(cur_stat.st_mode)) {
+				dir_unlink_r(file_name, rm_top, true, exclusion_list);
+			} else {
+				unlink(file_name.c_str());
+			}
+    	}
     }
 
+    if ((child || rm_top) && (!contains_string(path_dir, exclusion_list) && get_dir_entries(path_dir).empty())) {
+        rmdir(path_dir.c_str());
+    }
+}
+
+std::vector<std::string> get_dir_entries(std::string path_dir) {
+	std::vector<std::string> file_list;
+    struct dirent* dir_r;
+    std::string d_name_str;
+    DIR* dir_p = opendir(path_dir.c_str());
+    
+	while (dir_p != NULL && (dir_r = readdir(dir_p)) != NULL) {
+		d_name_str = std::string(dir_r->d_name);
+		if (d_name_str == "." || d_name_str == "..") {
+            continue;
+        }
+        
+        std::string file_name = std::string(path_dir);
+        if (file_name == "/" ) {
+			file_name += std::string() + dir_r->d_name;
+		} else {
+			file_name += std::string() + "/" + dir_r->d_name;
+		}
+        file_list.push_back(file_name);
+    }
+    
     if (dir_p != NULL) {
         closedir(dir_p);
     }
-    if (child || rm_top) {
-        rmdir(path_dir);
-    }
+
+    return file_list;
+}
+
+bool contains_string(std::string searchStr, std::vector<std::string> strList) {
+    if(std::find(strList.begin(), strList.end(), searchStr) != strList.end()) {
+		return true;
+	}
+    return false;
 }

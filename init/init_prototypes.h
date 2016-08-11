@@ -19,6 +19,9 @@
 
 #include <unistd.h>
 
+#include <vector>
+#include <string>
+
 // Macro: expansion to string
 #define INT_TO_STR(x) #x
 #define STR(x) INT_TO_STR(x)
@@ -30,7 +33,9 @@
 bool file_exists(const char* path);
 bool file_empty(const char* path);
 bool file_contains(const char* path, const char* needle);
-void dir_unlink_r(const char* path_dir, bool rm_top, bool child = false);
+void dir_unlink_r(std::string path_dir, bool rm_top = true, bool child = false, std::vector<std::string> exclusion_list = {});
+std::vector<std::string> get_dir_entries(std::string path_dir);
+bool contains_string(std::string cSearchStr, std::vector<std::string> strList);
 
 // Prototypes: files outputs
 void write_int(const char* path, int value);
