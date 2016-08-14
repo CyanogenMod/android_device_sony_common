@@ -153,8 +153,11 @@ int main(int argc, char** __attribute__((unused)) argv)
     init_board.finish_init();
     write_date(BOOT_TXT, true);
 
-    // Delete init toybox
+    // Delete init binaries
+    unlink(EXEC_KEYCHECK);
     unlink(EXEC_TOYBOX);
+    unlink(SBIN_CPIO_RECOVERY);
+    unlink(SBIN_INIT_SONY);
 
     // Unmount filesystems
     umount("/proc");
