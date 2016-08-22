@@ -26,6 +26,7 @@
 #define SBIN_CPIO_ANDROID "/sbin/ramdisk.cpio"
 #define SBIN_CPIO_RECOVERY "/sbin/ramdisk-recovery.cpio"
 #define SBIN_INIT_SONY "/sbin/init_sony"
+#define UPDATER_COMMAND "/cache_init/recovery/command"
 
 // Constants: keycheck commands
 #define KEYCHECK_RECOVERY_BOOT_ONLY (41 << 8)

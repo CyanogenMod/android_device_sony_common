@@ -31,6 +31,12 @@
 #ifndef DEV_BLOCK_MINOR
 #define DEV_BLOCK_MINOR 0
 #endif
+#ifndef DEV_BLOCK_CACHE_NUM
+#define DEV_BLOCK_CACHE_NUM -1
+#endif
+#ifndef DEV_BLOCK_CACHE_PATH
+#define DEV_BLOCK_CACHE_PATH DEV_BLOCK_PATH "p" STR(DEV_BLOCK_CACHE_NUM)
+#endif
 #ifndef DEV_BLOCK_FOTA_NUM
 #define DEV_BLOCK_FOTA_NUM -1
 #endif
@@ -64,6 +70,9 @@
 #endif
 #ifndef KEYCHECK_TIMEOUT
 #define KEYCHECK_TIMEOUT 3
+#endif
+#ifndef RECOVERY_INCLUDED
+#define RECOVERY_INCLUDED 1
 #endif
 
 #endif // __INIT_BOARD_H__

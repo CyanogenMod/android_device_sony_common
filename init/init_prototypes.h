@@ -39,6 +39,10 @@ void write_int(const char* path, int value);
 void write_string(const char* path, const char* value, bool append = false);
 void write_date(const char* path, bool append = false);
 
+// Prototypes: partitions helpers
+void partition_mount(const char* block_path, const char* mount_point,
+        bool ro, bool fs_ext4, bool fs_f2fs);
+
 // Prototypes: ramdisk helpers
 void ramdisk_clean_files(void);
 

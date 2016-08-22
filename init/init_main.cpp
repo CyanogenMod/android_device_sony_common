@@ -32,6 +32,7 @@ int main(int argc, char** __attribute__((unused)) argv)
     bool chargerBoot;
     bool multiRomBoot;
     bool recoveryBoot;
+    bool updaterBoot;
     int keycheckStatus;
     char buffer_event[20];
     init_board_device init_board;
@@ -45,6 +46,7 @@ int main(int argc, char** __attribute__((unused)) argv)
     unlink("/init");
 
     // Create directories
+    mkdir("/cache_init", 0755);
     mkdir("/dev/block", 0755);
     mkdir("/dev/input", 0755);
     mkdir("/proc", 0555);
@@ -64,14 +66,23 @@ int main(int argc, char** __attribute__((unused)) argv)
     mount("proc", "/proc", "proc", 0, NULL);
     mount("sysfs", "/sys", "sysfs", 0, NULL);
 
+    // Mount cache partition
+    if (DEV_BLOCK_CACHE_NUM != -1 && RECOVERY_INCLUDED)
+    {
+        mknod(DEV_BLOCK_CACHE_PATH, S_IFBLK | 0600,
+                makedev(DEV_BLOCK_MAJOR, DEV_BLOCK_CACHE_NUM));
+        partition_mount(DEV_BLOCK_CACHE_PATH, "/cache_init", true, true, true);
+    }
+
     // Additional board inits
     init_board.start_init();
 
-    // Warmboots detection
+    // Boot detections
     chargerBoot = CHARGER_BYPASS &&
             file_contains(WARMBOOT_CMDLINE, WARMBOOT_CHARGER);
     multiRomBoot = file_contains(WARMBOOT_CMDLINE, WARMBOOT_MULTIROM);
     recoveryBoot = file_contains(WARMBOOT_CMDLINE, WARMBOOT_RECOVERY);
+    updaterBoot = RECOVERY_INCLUDED && file_exists(UPDATER_COMMAND);
 
     // Keycheck introduction
     if (!recoveryBoot && !multiRomBoot && !chargerBoot)
@@ -118,7 +129,7 @@ int main(int argc, char** __attribute__((unused)) argv)
         }
 
         // FOTA Recovery importation
-        if (DEV_BLOCK_FOTA_NUM != -1 &&
+        if (DEV_BLOCK_FOTA_NUM != -1 && !updaterBoot &&
                 keycheckStatus != KEYCHECK_RECOVERY_BOOT_ONLY)
         {
             write_string(BOOT_TXT, "RECOVERY FOTA " DEV_BLOCK_FOTA_PATH, true);
@@ -166,6 +177,8 @@ int main(int argc, char** __attribute__((unused)) argv)
     unlink(SBIN_INIT_SONY);
 
     // Unmount filesystems
+    umount("/cache_init");
+    rmdir("/cache_init");
     umount("/proc");
     umount("/sys");
 
