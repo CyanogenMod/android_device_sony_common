@@ -27,14 +27,18 @@ void ramdisk_clean_files(void)
     unlink("/sbin/ueventd");
     unlink("/sbin/watchdogd");
     unlink("/charger");
+    unlink("/d");
     unlink("/default.prop");
-    unlink("/file_contexts");
+    unlink("/etc");
+    unlink("/file_contexts.bin");
     unlink("/init");
     unlink("/init.real");
     unlink("/logo.rle");
     unlink("/property_contexts");
+    unlink("/sdcard");
     unlink("/seapp_contexts");
     unlink("/selinux_version");
     unlink("/sepolicy");
     unlink("/service_contexts");
+    unlink("/vendor");
 }
