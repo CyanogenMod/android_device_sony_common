@@ -146,13 +146,13 @@ int main(int argc, char** __attribute__((unused)) argv)
         // Android boot
         write_string(BOOT_TXT, "ANDROID BOOT", true);
         init_board.introduce_android();
+    }
 
-        // Rename Android init on boot
-        if (argc < 2)
-        {
-            unlink("/init");
-            rename("/init.real", "/init");
-        }
+    // Rename init ready for boot
+    if (file_exists("/init.real") && argc < 2)
+    {
+        unlink("/init");
+        rename("/init.real", "/init");
     }
 
     // Finish init outputs
