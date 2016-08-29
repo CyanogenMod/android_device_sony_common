@@ -90,7 +90,13 @@ int main(int argc, char** argv)
     {
 #if KEYCHECK_ENABLED
         // Listen for volume keys
-        const char* argv_keycheck[] = { EXEC_KEYCHECK, nullptr };
+        const char* argv_keycheck[] = {
+            EXEC_KEYCHECK,
+#if KEYCHECK_NO_DOWN
+            "--no-down",
+#endif
+            nullptr
+        };
         pid_t keycheck_pid = system_exec_bg(argv_keycheck);
 
         // Board keycheck introduction
