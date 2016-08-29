@@ -119,7 +119,7 @@ int main(int argc, char** __attribute__((unused)) argv)
 
         // FOTA Recovery importation
         if (DEV_BLOCK_FOTA_MINOR != -1 &&
-                keycheckStatus != KEYCHECK_RECOVERY_BOOT_ONLY)
+                (FOTA_ONLY || keycheckStatus != KEYCHECK_RECOVERY_BOOT_ONLY))
         {
             write_string(BOOT_TXT, "RECOVERY FOTA " DEV_BLOCK_FOTA_PATH, true);
             mknod(DEV_BLOCK_FOTA_PATH, S_IFBLK | 0600,

@@ -62,6 +62,9 @@
 #ifndef CHARGER_BYPASS
 #define CHARGER_BYPASS 1
 #endif
+#ifndef FOTA_ONLY
+#define FOTA_ONLY 0
+#endif
 #ifndef FOTA_RAMDISK_CHECK
 #define FOTA_RAMDISK_CHECK 1
 #endif
