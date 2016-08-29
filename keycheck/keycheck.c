@@ -165,15 +165,17 @@ static int scan_dir(const char *dirname)
     return 0;
 }
 
-int main(int __attribute__((unused)) argc,
-        char __attribute__((unused)) *argv[])
+int main(int argc,
+        char *argv[])
 {
     int i;
     int res;
     struct input_event event;
     int event_count = 0;
+    unsigned char keys;
     const char *device_path = "/dev/input";
 
+    keys = 2;
     nfds = 1;
     ufds = calloc(1, sizeof(ufds[0]));
     ufds[0].fd = inotify_init();
@@ -190,6 +192,17 @@ int main(int __attribute__((unused)) argc,
         return 1;
     }
 
+    if (argc > 1) {
+        switch (argv[1][0]) {
+            case '1':
+                keys = 1;
+                break;
+            case '2':
+            default:
+                keys = 2;
+        }
+    }
+
     while (1) {
         poll(ufds, nfds, -1);
         if (ufds[0].revents & POLLIN) {
@@ -204,10 +217,10 @@ int main(int __attribute__((unused)) argc,
                         return 1;
                     }
                     // TODO: Less hardcoding
-                    if (event.code == KEY_VOLUMEDOWN) {
+                    if (keys >= 2 && event.code == KEY_VOLUMEDOWN) {
                         //fprintf(stderr, "Volume down\n");
                         return 41;
-                    } else if (event.code == KEY_VOLUMEUP) {
+                    } else if (keys >= 1 && event.code == KEY_VOLUMEUP) {
                         //fprintf(stderr, "Volume up\n");
                         return 42;
                     }
