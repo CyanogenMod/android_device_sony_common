@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2015-2016 The CyanogenMod Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
@@ -10,6 +27,9 @@
 #include <errno.h>
 #include <unistd.h>
 
+#include "keycheck.h"
+
+// Global variables
 static struct pollfd *ufds;
 static char **device_names;
 static int nfds;
@@ -28,50 +48,49 @@ static int open_device(const char *device)
 
     fd = open(device, O_RDWR);
     if (fd < 0) {
-        //fprintf(stderr, "could not open %s, %s\n", device, strerror(errno));
         return -1;
     }
 
     if (ioctl(fd, EVIOCGVERSION, &version)) {
-        //printf(stderr, "could not get driver version for %s, %s\n", device, strerror(errno));
         return -1;
     }
+
     if (ioctl(fd, EVIOCGID, &id)) {
-        //fprintf(stderr, "could not get driver id for %s, %s\n", device, strerror(errno));
         return -1;
     }
+
     name[sizeof(name) - 1] = '\0';
     location[sizeof(location) - 1] = '\0';
     idstr[sizeof(idstr) - 1] = '\0';
+
     if (ioctl(fd, EVIOCGNAME(sizeof(name) - 1), &name) < 1) {
-        //fprintf(stderr, "could not get device name for %s, %s\n", device, strerror(errno));
         name[0] = '\0';
     }
+
     if (ioctl(fd, EVIOCGPHYS(sizeof(location) - 1), &location) < 1) {
-        //fprintf(stderr, "could not get location for %s, %s\n", device, strerror(errno));
         location[0] = '\0';
     }
+
     if (ioctl(fd, EVIOCGUNIQ(sizeof(idstr) - 1), &idstr) < 1) {
-        //fprintf(stderr, "could not get idstring for %s, %s\n", device, strerror(errno));
         idstr[0] = '\0';
     }
 
     if (ioctl(fd, EVIOCSCLOCKID, &clkid) != 0) {
-        //fprintf(stderr, "Can't enable monotonic clock reporting: %s\n", strerror(errno));
         // a non-fatal error
     }
 
     new_ufds = realloc(ufds, sizeof(ufds[0]) * (nfds + 1));
     if (new_ufds == NULL) {
-        //fprintf(stderr, "out of memory\n");
         return -1;
     }
+
     ufds = new_ufds;
-    new_device_names = realloc(device_names, sizeof(device_names[0]) * (nfds + 1));
+    new_device_names = realloc(device_names,
+            sizeof(device_names[0]) * (nfds + 1));
     if (new_device_names == NULL) {
-        //fprintf(stderr, "out of memory\n");
         return -1;
     }
+
     device_names = new_device_names;
 
     ufds[nfds].fd = fd;
@@ -89,7 +108,8 @@ int close_device(const char *device)
         if (strcmp(device_names[i], device) == 0) {
             int count = nfds - i - 1;
             free(device_names[i]);
-            memmove(device_names + i, device_names + i + 1, sizeof(device_names[0]) * count);
+            memmove(device_names + i, device_names + i + 1,
+                    sizeof(device_names[0]) * count);
             memmove(ufds + i, ufds + i + 1, sizeof(ufds[0]) * count);
             nfds--;
             return 0;
@@ -113,10 +133,8 @@ static int read_notify(const char *dirname, int nfd)
         if (errno == EINTR) {
             return 0;
         }
-        //fprintf(stderr, "could not get event, %s\n", strerror(errno));
         return 1;
     }
-    //printf("got %d bytes of event information\n", res);
 
     strcpy(devname, dirname);
     filename = devname + strlen(devname);
@@ -124,7 +142,6 @@ static int read_notify(const char *dirname, int nfd)
 
     while (res >= (int)sizeof(*event)) {
         event = (struct inotify_event *)(event_buf + event_pos);
-        //printf("%d: %08x \"%s\"\n", event->wd, event->mask, event->len ? event->name : "");
         if (event->len) {
             strcpy(filename, event->name);
             if (event->mask & IN_CREATE) {
@@ -146,18 +163,22 @@ static int scan_dir(const char *dirname)
     char *filename;
     DIR *dir;
     struct dirent *de;
+
     dir = opendir(dirname);
     if (dir == NULL) {
         return -1;
     }
+
     strcpy(devname, dirname);
     filename = devname + strlen(devname);
     *filename++ = '/';
+
     while ((de = readdir(dir))) {
         if (de->d_name[0] == '.' && (de->d_name[1] == '\0' ||
                 (de->d_name[1] == '.' && de->d_name[2] == '\0'))) {
             continue;
         }
+
         strcpy(filename, de->d_name);
         open_device(devname);
     }
@@ -181,12 +202,11 @@ int main(int __attribute__((unused)) argc,
 
     res = inotify_add_watch(ufds[0].fd, device_path, IN_DELETE | IN_CREATE);
     if (res < 0) {
-        //fprintf(stderr, "could not add watch for %s, %s\n", device_path, strerror(errno));
         return 1;
     }
+
     res = scan_dir(device_path);
     if (res < 0) {
-        //fprintf(stderr, "scan dir failed for %s\n", device_path);
         return 1;
     }
 
@@ -195,25 +215,23 @@ int main(int __attribute__((unused)) argc,
         if (ufds[0].revents & POLLIN) {
             read_notify(device_path, ufds[0].fd);
         }
+
         for (i = 1; i < nfds; i++) {
-            if (ufds[i].revents) {
-                if (ufds[i].revents & POLLIN) {
-                    res = read(ufds[i].fd, &event, sizeof(event));
-                    if (res < (int)sizeof(event)) {
-                        //fprintf(stderr, "could not get event\n");
-                        return 1;
-                    }
-                    // TODO: Less hardcoding
-                    if (event.code == KEY_VOLUMEDOWN) {
-                        //fprintf(stderr, "Volume down\n");
-                        return 41;
-                    } else if (event.code == KEY_VOLUMEUP) {
-                        //fprintf(stderr, "Volume up\n");
-                        return 42;
-                    }
-                    if (event_count && --event_count == 0) {
-                        return 0;
-                    }
+            if ((ufds[i].revents) && (ufds[i].revents & POLLIN)) {
+                res = read(ufds[i].fd, &event, sizeof(event));
+                if (res < (int)sizeof(event)) {
+                    return 1;
+                }
+
+                if (event.code == KEY_VOLUMEDOWN) {
+                    return KEYCHECK_PRESSED_VOLUMEDOWN;
+                }
+                else if (event.code == KEY_VOLUMEUP) {
+                    return KEYCHECK_PRESSED_VOLUMEUP;
+                }
+
+                if (event_count && --event_count == 0) {
+                    return 0;
                 }
             }
         }
