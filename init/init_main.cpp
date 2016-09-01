@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <string.h>
 #include <sys/mount.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -25,16 +26,27 @@
 #include "init_prototypes.h"
 
 // Main: executable
-int main(int argc, char** __attribute__((unused)) argv)
+int main(int argc, char** argv)
 {
     // Execution variables
     unsigned char i;
+    bool testBoard;
     bool chargerBoot;
     bool multiRomBoot;
     bool recoveryBoot;
     int keycheckStatus;
     char buffer_event[20];
     init_board_device init_board;
+
+    // Parameters input
+    testBoard = false;
+    for (i = 1; i < argc; ++i)
+    {
+        // Detect board test
+        if (strcmp(argv[i], "--board-test") == 0) {
+            testBoard = true;
+        }
+    }
 
     // Generate boot log
     unlink(BOOT_TXT);
@@ -112,13 +124,13 @@ int main(int argc, char** __attribute__((unused)) argv)
         init_board.introduce_recovery();
 
         // Clean ramdisk files before extraction on boot
-        if (argc < 2)
+        if (!testBoard)
         {
             ramdisk_clean_files();
         }
 
         // FOTA Recovery importation
-        if (DEV_BLOCK_FOTA_MINOR != -1 &&
+        if (!testBoard && DEV_BLOCK_FOTA_MINOR != -1 &&
                 (!file_exists(SBIN_CPIO_RECOVERY) || \
                 keycheckStatus != KEYCHECK_RECOVERY_BOOT_ONLY))
         {
@@ -134,7 +146,7 @@ int main(int argc, char** __attribute__((unused)) argv)
         }
 
         // Recovery ramdisk
-        if (file_exists(SBIN_CPIO_RECOVERY))
+        if (!testBoard && file_exists(SBIN_CPIO_RECOVERY))
         {
             const char* argv_ramdiskcpio[] = { EXEC_TOYBOX, "cpio", "-i", "-F",
                     SBIN_CPIO_RECOVERY, nullptr };
@@ -150,7 +162,7 @@ int main(int argc, char** __attribute__((unused)) argv)
     }
 
     // Rename init ready for boot
-    if (file_exists("/init.real") && argc < 2)
+    if (file_exists("/init.real") && !testBoard)
     {
         unlink("/init");
         rename("/init.real", "/init");
@@ -161,17 +173,20 @@ int main(int argc, char** __attribute__((unused)) argv)
     write_date(BOOT_TXT, true);
 
     // Delete init binaries
-    unlink(EXEC_KEYCHECK);
-    unlink(EXEC_TOYBOX);
-    unlink(SBIN_CPIO_RECOVERY);
-    unlink(SBIN_INIT_SONY);
+    if (!testBoard)
+    {
+      unlink(EXEC_KEYCHECK);
+      unlink(EXEC_TOYBOX);
+      unlink(SBIN_CPIO_RECOVERY);
+      unlink(SBIN_INIT_SONY);
+    }
 
     // Unmount filesystems
     umount("/proc");
     umount("/sys");
 
     // Init normally without parameters
-    if (argc < 2)
+    if (!testBoard)
     {
         // Unlink /dev/*
         dir_unlink_r("/dev", false);
