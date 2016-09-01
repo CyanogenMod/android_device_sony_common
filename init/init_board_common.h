@@ -18,6 +18,7 @@
 #define __INIT_BOARD_COMMON_H__
 
 #include "init_prototypes.h"
+#include "../keycheck/keycheck.h"
 
 // Constants: file paths
 #define BOOT_TXT "/boot.txt"
@@ -28,8 +29,8 @@
 #define SBIN_INIT_SONY "/sbin/init_sony"
 
 // Constants: keycheck commands
-#define KEYCHECK_RECOVERY_BOOT_ONLY (41 << 8)
-#define KEYCHECK_RECOVERY_FOTA_BOOT (42 << 8)
+#define KEYCHECK_RECOVERY_BOOT_ONLY (KEYCHECK_PRESSED_VOLUMEDOWN << 8)
+#define KEYCHECK_RECOVERY_FOTA_BOOT (KEYCHECK_PRESSED_VOLUMEUP << 8)
 
 // Class: init_board_common
 class init_board_common
