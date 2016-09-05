@@ -68,6 +68,9 @@
 #ifndef KEYCHECK_ENABLED
 #define KEYCHECK_ENABLED 1
 #endif
+#ifndef KEYCHECK_NO_DOWN
+#define KEYCHECK_NO_DOWN 0
+#endif
 #ifndef KEYCHECK_TIMEOUT
 #define KEYCHECK_TIMEOUT 3
 #endif

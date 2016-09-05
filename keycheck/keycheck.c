@@ -186,15 +186,16 @@ static int scan_dir(const char *dirname)
     return 0;
 }
 
-int main(int __attribute__((unused)) argc,
-        char __attribute__((unused)) *argv[])
+int main(int argc, char* argv[])
 {
     int i;
     int res;
     struct input_event event;
     int event_count = 0;
     const char *device_path = "/dev/input";
+    unsigned char keys;
 
+    keys = KEYCHECK_CHECK_VOLUMEDOWN | KEYCHECK_CHECK_VOLUMEUP;
     nfds = 1;
     ufds = calloc(1, sizeof(ufds[0]));
     ufds[0].fd = inotify_init();
@@ -210,6 +211,13 @@ int main(int __attribute__((unused)) argc,
         return 1;
     }
 
+    for (i = 1; i < argc; ++i)
+    {
+        if (strcmp(argv[i], "--no-down") == 0) {
+            keys &= ~KEYCHECK_CHECK_VOLUMEDOWN;
+        }
+    }
+
     while (1) {
         poll(ufds, nfds, -1);
         if (ufds[0].revents & POLLIN) {
@@ -223,10 +231,12 @@ int main(int __attribute__((unused)) argc,
                     return 1;
                 }
 
-                if (event.code == KEY_VOLUMEDOWN) {
+                if (event.code == KEY_VOLUMEDOWN &&
+                        (keys & KEYCHECK_CHECK_VOLUMEDOWN) != 0) {
                     return KEYCHECK_PRESSED_VOLUMEDOWN;
                 }
-                else if (event.code == KEY_VOLUMEUP) {
+                else if (event.code == KEY_VOLUMEUP &&
+                        (keys & KEYCHECK_CHECK_VOLUMEUP) != 0) {
                     return KEYCHECK_PRESSED_VOLUMEUP;
                 }
 
