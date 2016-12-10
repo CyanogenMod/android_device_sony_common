@@ -47,6 +47,10 @@ LOCAL_STATIC_LIBRARIES := \
     libelf \
     libz
 
+ifneq ($(BOARD_SONY_INIT_FLAGS)),)
+LOCAL_CFLAGS += $(BOARD_SONY_INIT_FLAGS)
+endif
+
 LOCAL_CLANG := true
 
 include $(BUILD_EXECUTABLE)
