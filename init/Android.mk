@@ -29,10 +29,20 @@ LOCAL_SRC_FILES := \
 LOCAL_C_INCLUDES := \
     ../extract_ramdisk
 
+ifneq ($(BOARD_SONY_INIT_INCLUDE),)
+LOCAL_C_INCLUDES += \
+    $(BOARD_SONY_INIT_INCLUDE)
+endif
+
 LOCAL_CPPFLAGS := \
     -Wall \
     -Wextra \
     -Werror
+
+ifneq ($(BOARD_SONY_INIT_FLAGS),)
+LOCAL_CFLAGS += \
+    $(BOARD_SONY_INIT_FLAGS)
+endif
 
 LOCAL_MODULE := init_sony
 LOCAL_MODULE_TAGS := optional
